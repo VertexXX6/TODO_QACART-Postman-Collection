@@ -1,0 +1,439 @@
+{
+	"info": {
+		"_postman_id": "8b28a935-a87d-4be5-be0a-bd4cf21d6303",
+		"name": "TODO_QACART",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45850699",
+		"_collection_link": "https://rawan-4828560.postman.co/workspace/Rawan's-Workspace~34de6cf4-79fd-4929-871b-6f9c1338f207/collection/45850699-8b28a935-a87d-4be5-be0a-bd4cf21d6303?action=share&source=collection_link&creator=45850699"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"rawanelsayyd@gmail.com\",\r\n  \"password\": \"123456+123456\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://todo.qacart.com/api/v1/users/login",
+					"protocol": "https",
+					"host": [
+						"todo",
+						"qacart",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response has access_token\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"access_token\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has userID\", function () {\r",
+							"    pm.expect(jsonData.userID).to.not.be.undefined;\r",
+							"    pm.expect(jsonData.userID).to.not.eql(\"\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has firstName\", function () {\r",
+							"    pm.expect(jsonData.firstName).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"let sentFirstName = pm.environment.get(\"firstName\");\r",
+							"pm.test(\"First name in response matches the sent first name\", function () {\r",
+							"    pm.expect(jsonData.firstName).to.eql(sentFirstName);\r",
+							"});\r",
+							"\r",
+							" \r",
+							" \r",
+							"pm.environment.set(\"access_token\", jsonData.access_token);\r",
+							"\r",
+							" \r",
+							"pm.test(\"Response has access_token\", function () {\r",
+							"    pm.expect(jsonData.access_token).to.not.be.undefined;\r",
+							"    pm.expect(jsonData.access_token).to.not.eql(\"\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));\r",
+							"pm.environment.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));\r",
+							"pm.environment.set(\"firstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));\r",
+							"pm.environment.set(\"lastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));\r",
+							"if (!pm.environment.get(\"BaseURL\")) {\r",
+							"    pm.environment.set(\"BaseURL\", \"https://todo.qacart.com\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{$randomPassword}}\",\r\n    \"firstName\": \"{{firstName}}\",\r\n    \"lastName\": \"{{$randomLastName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/users/register",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							" let jsonData = pm.response.json();\r",
+							" pm.environment.set(\"id\", jsonData._id);\r",
+							"pm.environment.set(\"item\", jsonData.item);\r",
+							"pm.environment.set(\"userID\", jsonData.userID);\r",
+							"pm.environment.set(\"createdAt\", jsonData.createdAt);\r",
+							"pm.environment.set(\"isCompleted\", jsonData.isCompleted);\r",
+							"pm.environment.set(\"__v\", jsonData.__v);\r",
+							"\r",
+							"\r",
+							"// isCompleted\r",
+							"pm.test(\"isCompleted is boolean\", function () {\r",
+							"    pm.expect(jsonData.isCompleted).to.be.a(\"boolean\");\r",
+							"});\r",
+							"\r",
+							"// _id\r",
+							"pm.test(\"_id exists and is string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"_id\");\r",
+							"    pm.expect(jsonData._id).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"// item\r",
+							"pm.test(\"item exists and is string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"item\");\r",
+							"    pm.expect(jsonData.item).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"// userID\r",
+							"pm.test(\"userID exists and is string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"userID\");\r",
+							"    pm.expect(jsonData.userID).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"// createdAt\r",
+							"pm.test(\"createdAt exists and is string (date format)\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"createdAt\");\r",
+							"    pm.expect(jsonData.createdAt).to.be.a(\"string\");\r",
+							"    pm.expect(Date.parse(jsonData.createdAt)).to.not.be.NaN; // تأكيد انه تاريخ صحيح\r",
+							"});\r",
+							"\r",
+							"// __v\r",
+							"pm.test(\"__v exists and is number\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"__v\");\r",
+							"    pm.expect(jsonData.__v).to.be.a(\"number\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item\": \"new hello new personallity\",\r\n    \"isCompleted\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/tasks",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mark todo list as completed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let jsonData = pm.response.json();\r",
+							"pm.test(\"isCompleted exists and is boolean\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"isCompleted\");\r",
+							"    pm.expect(jsonData.isCompleted).to.be.a(\"boolean\");\r",
+							"     pm.expect(jsonData.isCompleted).to.eql(true);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item\": \"new hello new personallity\",\r\n    \"isCompleted\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/tasks/{{id}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/tasks/{{id}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Seed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/seed      \n\n",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"seed      \n\n"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
